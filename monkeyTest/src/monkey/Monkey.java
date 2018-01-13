@@ -3,11 +3,9 @@ package monkey;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.Properties;
-
 
 /**
  * @author 张大爷
@@ -21,25 +19,25 @@ public class Monkey {
 				"java.lang.SecurityException", "java.lang.ClassNotFoundException", "java.lang.UnsatisfiedLinkError",
 				"java.lang.IllegalArgumentException", "java.lang.AbstractMethodError", "java.lang.IllegalAccessError",
 				"java.lang.IndexOutOfBoundsException", "flipjava.io.IOException" };
-		String command = "adb shell monkey -p com.geometry --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --monitor-native-crashes --throttle 200 -s 5 -v -v -v 1000";
-		String monkeyLogFile = "C:\\Users\\Administrator\\monkeylog\\monkey.log";
-		String AnalyzeLogFile = "C:\\Users\\Administrator\\monkeylog\\analyze.log";
 		BufferedReader bReader = null;
 		String line = null;
 		int count = 0;
 		try {
-			FileWriter monkeyLogwriter = new FileWriter(monkeyLogFile);
-			FileWriter analyzeLogWriter = new FileWriter(AnalyzeLogFile);
+			FileWriter monkeyLogwriter = new FileWriter(getConfigPro().getProperty("monkeyLogFile"));
+			FileWriter analyzeLogWriter = new FileWriter(getConfigPro().getProperty("AnalyzeLogFile"));
 			try {
-				Process process = Runtime.getRuntime().exec(command);// 运行cmd命令
+				Process process = Runtime.getRuntime().exec(getConfigPro().getProperty("command"));// 运行cmd命令
 				bReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-				while ((line = bReader.readLine()) != null) {
-					if (line.contains("Monkey finished")) {
-						System.out.println("Monkey test is finished！！");
-					}
+				while ((line = bReader.readLine()) != null) {	
 					System.out.println(line);
 					monkeyLogwriter.write(line);// 一行行日志写入文件
 					monkeyLogwriter.write("\r\n");// 写入文件一行后换行
+					if (line.contains("Monkey finished")) {
+						System.out.println("Monkey test is finished！！");
+						System.out.println("Monkey test is finished！！");
+						System.out.println("Monkey test is finished！！");
+						System.out.println("Three important things to say !!!");
+					}
 					for (int i = 0; i < errors.length; i++) {
 						// 拿error数组对比进行筛选，如果有就写入analyze.log
 						if (line.contains(errors[i])) {
@@ -65,20 +63,20 @@ public class Monkey {
 		}
 	}
 
-	// 获取环境配置文件信息env.properties
-	public static Properties getEnvPro() {
+	// 获取配置文件信息config.properties
+	public static Properties getConfigPro() {
 		Properties pro = new Properties();
-		File file = new File("");
+		File file = new File("C:\\Users\\Administrator\\eclipse-workspace\\RunMonkey\\monkeyTest\\config.properties");
 		try {
 			if (file.exists()) {
 				pro.load(new FileInputStream(file));
 			} else {
-				pro.setProperty("host", "http://release.thy360.com");
-				pro.setProperty("region", "813395");
-				pro.setProperty("phone", "13714672776");
-				pro.setProperty("code", "1234");
-				pro.setProperty("introducerCode", "13714672770");
-				pro.store(new FileOutputStream(file), "ENV CLASS");
+				pro.setProperty("AnalyzeLogFile",
+						"C:\\Users\\Administrator\\eclipse-workspace\\RunMonkey\\monkeyTest\\log\\analyze.log");
+				pro.setProperty("monkeyLogFile",
+						"C:\\Users\\Administrator\\eclipse-workspace\\RunMonkey\\monkeyTest\\log\\monkey.log");
+				pro.setProperty("command",
+						"adb shell monkey -p com.geometry --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --monitor-native-crashes --throttle 100 -s 5 -v -v -v 500");
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
