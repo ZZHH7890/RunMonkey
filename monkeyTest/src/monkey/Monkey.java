@@ -23,12 +23,18 @@ public class Monkey {
 		String line = null;
 		int count = 0;
 		try {
-			FileWriter monkeyLogwriter = new FileWriter(getConfigPro().getProperty("monkeyLogFile"));
-			FileWriter analyzeLogWriter = new FileWriter(getConfigPro().getProperty("AnalyzeLogFile"));
+			File monkeyLogFile = new File(getConfigPro().getProperty("monkeyLogFile"));
+			File monkeyLogDir = monkeyLogFile.getParentFile();
+			if (!monkeyLogDir.exists()) {
+				monkeyLogDir.mkdirs();
+			}
+			File analyzeLogFile = new File(getConfigPro().getProperty("AnalyzeLogFile"));
+			FileWriter monkeyLogwriter = new FileWriter(monkeyLogFile);
+			FileWriter analyzeLogWriter = new FileWriter(analyzeLogFile);
 			try {
 				Process process = Runtime.getRuntime().exec(getConfigPro().getProperty("command"));// 运行cmd命令
 				bReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-				while ((line = bReader.readLine()) != null) {	
+				while ((line = bReader.readLine()) != null) {
 					System.out.println(line);
 					monkeyLogwriter.write(line);// 一行行日志写入文件
 					monkeyLogwriter.write("\r\n");// 写入文件一行后换行
@@ -71,10 +77,8 @@ public class Monkey {
 			if (file.exists()) {
 				pro.load(new FileInputStream(file));
 			} else {
-				pro.setProperty("AnalyzeLogFile",
-						"C:\\Users\\Administrator\\eclipse-workspace\\RunMonkey\\monkeyTest\\log\\analyze.log");
-				pro.setProperty("monkeyLogFile",
-						"C:\\Users\\Administrator\\eclipse-workspace\\RunMonkey\\monkeyTest\\log\\monkey.log");
+				pro.setProperty("AnalyzeLogFile", "C:\\Users\\Administrator\\monkeylog\\analyze.log");
+				pro.setProperty("monkeyLogFile", "C:\\Users\\Administrator\\monkeylog\\monkey.log");
 				pro.setProperty("command",
 						"adb shell monkey -p com.geometry --ignore-crashes --ignore-timeouts --ignore-security-exceptions --ignore-native-crashes --monitor-native-crashes --throttle 100 -s 5 -v -v -v 500");
 			}
