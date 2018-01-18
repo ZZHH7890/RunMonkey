@@ -22,7 +22,7 @@ command = adb shell monkey -p com.geometry --ignore-crashes --ignore-timeouts --
 9. Got IOException performing flipjava.io.IOException: write failed: EINVAL (Invalid argument) 这个异常为monkey自己的问题可以忽略
 https://www.cnblogs.com/miniren/p/4858788.html
 
-10. android SDK安装好
+10. android SDK安装好，配置adb环境变量
 C:\Users\Administrator>adb version
 Android Debug Bridge version 1.0.39
 Version 0.0.1-4500957
